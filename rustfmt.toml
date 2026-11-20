@@ -1,0 +1,18 @@
+# Formatting policy.
+#
+# `max_width = 100` is chosen so that a line of Rust and a line of prose in the
+# documentation wrap at roughly the same place, which matters because the two are
+# read side by side in review.
+#
+# Only stable-channel options are listed here. Nightly-only settings
+# (`imports_granularity`, `group_imports`, `wrap_comments`) were deliberately
+# dropped: they are silently ignored on stable, so relying on them would mean CI
+# and a developer's nightly rustfmt disagree about what "formatted" means.
+max_width = 100
+hard_tabs = false
+tab_spaces = 4
+edition = "2021"
+newline_style = "Unix"
+
+# Short items on one line; long ones stay expanded.
+use_small_heuristics = "Default"

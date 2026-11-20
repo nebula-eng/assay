@@ -1,0 +1,28 @@
+[package]
+name = "assay-cli"
+description = "Command-line front-end for the Assay static supply-chain analysis engine"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+homepage.workspace = true
+documentation.workspace = true
+
+keywords = ["security", "cli", "binary-analysis", "sbom"]
+categories = ["command-line-utilities", "development-tools"]
+
+[[bin]]
+name = "assay"
+path = "src/main.rs"
+
+[dependencies]
+assay-core = { workspace = true }
+clap = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+rayon = { workspace = true }
+
+[dev-dependencies]
+tempfile = "3"

@@ -1,0 +1,24 @@
+[package]
+name = "assay-core"
+description = "Static supply-chain analysis engine: binary format dissection, risk scoring, SBOM synthesis"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+homepage.workspace = true
+documentation.workspace = true
+
+keywords = ["security", "binary-analysis", "malware-analysis", "sbom", "pe-elf"]
+categories = ["development-tools", "parser-implementations", "security"]
+
+[dependencies]
+serde = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+regex-lite = { workspace = true }
+rayon = { workspace = true }
+
+[dev-dependencies]
+tempfile = "3"

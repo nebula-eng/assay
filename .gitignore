@@ -1,0 +1,65 @@
+# Build artefacts
+target/
+**/target/
+*.rs.bk
+*.pdb
+
+# Node
+node_modules/
+ui/dist/
+ui/.vite/
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Generated fixtures — reproducible with `make samples`
+samples/*
+!samples/.gitkeep
+
+# Tauri writes the capability manifests and JSON schemas on every build; they are
+# derived from tauri.conf.json and the plugin set, never edited by hand.
+crates/assay-desktop/gen/
+
+# Screenshots and traces from `scripts/ui_shots.mjs` / `design_audit.mjs`.
+.shots/
+
+# Private working notes kept by the local assistant. Not part of the project.
+.workbuddy/
+
+# Reports and scratch output
+*.report.json
+*.report.html
+bom.json
+out/
+scratch/
+*.pcap
+*.pcapng
+
+# Editor / OS
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Rust-analyzer/rustfmt scratch
+**/*.rs.proc-macro2
+*.profraw
+perf.data*
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+
+# Local environment
+.env
+.env.*
+!.env.example

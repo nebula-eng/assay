@@ -1,0 +1,735 @@
+{
+  "schema_version": "1.0",
+  "tool": {
+    "name": "assay",
+    "version": "0.1.3",
+    "build": "dev"
+  },
+  "artefact": {
+    "path": "suspicious.exe",
+    "name": "suspicious.exe",
+    "size": 4096,
+    "sha256": "647e55903f2b590228b3526c431dc11cf1a8dfa2790c0def6828b48d39ce72c2",
+    "sha1": "6cc288eacda2b8d8375b384778846d1d597424dc",
+    "md5": "136a080f1ff1a982d53e8c479b324293",
+    "fuzzy": "96:vOCOKITqnpbf3OP7BSvxpi2hU4pFlh3V:vOCOKITqnpbf3OP7BSvxpi2hU4pFlh3",
+    "detected_format": "pe",
+    "detection_confidence": "certain",
+    "magic": "4d5a000000000000",
+    "detection_reason": "MZ DOS header"
+  },
+  "image": {
+    "format": "pe",
+    "kind": "executable",
+    "arch": "x86",
+    "endian": "little",
+    "bitness": 32,
+    "entry_point": 4096,
+    "image_base": 4194304,
+    "sections": [
+      {
+        "name": ".text",
+        "virtual_address": 4096,
+        "virtual_size": 376,
+        "file_offset": 512,
+        "file_size": 512,
+        "entropy": 4.664682812141157,
+        "permissions": {
+          "read": true,
+          "write": true,
+          "execute": true
+        },
+        "sha256": "94127e403ca6c8d8112e759241c549190f317edf8dd5a969e56fc06b2c1ee17e",
+        "raw_characteristics": 3758096416
+      },
+      {
+        "name": ".data",
+        "virtual_address": 8192,
+        "virtual_size": 2048,
+        "file_offset": 1024,
+        "file_size": 2048,
+        "entropy": 7.911926693897583,
+        "permissions": {
+          "read": true,
+          "write": true,
+          "execute": false
+        },
+        "sha256": "c18415ec9fadb17c2d40eef580fc22a627e1abc1f6fc906114d3e446ff160355",
+        "raw_characteristics": 3221225536
+      },
+      {
+        "name": ".idata",
+        "virtual_address": 12288,
+        "virtual_size": 540,
+        "file_offset": 3072,
+        "file_size": 1024,
+        "entropy": 2.6264478788789556,
+        "permissions": {
+          "read": true,
+          "write": true,
+          "execute": false
+        },
+        "sha256": "03dae80cf578d33aabb042ee9d4119c4c22f129df05b1de336db53a5b4ad5307",
+        "raw_characteristics": 3221225536
+      }
+    ],
+    "imports": [
+      {
+        "library": "kernel32.dll",
+        "symbol": "VirtualAllocEx",
+        "ordinal": null,
+        "hint": 0,
+        "delayed": false
+      },
+      {
+        "library": "kernel32.dll",
+        "symbol": "WriteProcessMemory",
+        "ordinal": null,
+        "hint": 0,
+        "delayed": false
+      },
+      {
+        "library": "kernel32.dll",
+        "symbol": "CreateRemoteThread",
+        "ordinal": null,
+        "hint": 0,
+        "delayed": false
+      },
+      {
+        "library": "kernel32.dll",
+        "symbol": "CreateProcessA",
+        "ordinal": null,
+        "hint": 0,
+        "delayed": false
+      },
+      {
+        "library": "kernel32.dll",
+        "symbol": "GetComputerNameA",
+        "ordinal": null,
+        "hint": 0,
+        "delayed": false
+      },
+      {
+        "library": "user32.dll",
+        "symbol": "GetAsyncKeyState",
+        "ordinal": null,
+        "hint": 0,
+        "delayed": false
+      },
+      {
+        "library": "user32.dll",
+        "symbol": "SetWindowsHookExA",
+        "ordinal": null,
+        "hint": 0,
+        "delayed": false
+      },
+      {
+        "library": "wininet.dll",
+        "symbol": "InternetOpenA",
+        "ordinal": null,
+        "hint": 0,
+        "delayed": false
+      },
+      {
+        "library": "wininet.dll",
+        "symbol": "HttpSendRequestA",
+        "ordinal": null,
+        "hint": 0,
+        "delayed": false
+      },
+      {
+        "library": "wininet.dll",
+        "symbol": "URLDownloadToFileA",
+        "ordinal": null,
+        "hint": 0,
+        "delayed": false
+      },
+      {
+        "library": "psapi.dll",
+        "symbol": "IsDebuggerPresent",
+        "ordinal": null,
+        "hint": 0,
+        "delayed": false
+      },
+      {
+        "library": "psapi.dll",
+        "symbol": "GetAsyncKeyState",
+        "ordinal": null,
+        "hint": 0,
+        "delayed": false
+      },
+      {
+        "library": "psapi.dll",
+        "symbol": "CreateToolhelp32Snapshot",
+        "ordinal": null,
+        "hint": 0,
+        "delayed": false
+      }
+    ],
+    "exports": [],
+    "resources": [],
+    "debug_artifacts": [],
+    "signature": {
+      "scheme": "none",
+      "present": false,
+      "signer": null,
+      "issuer": null,
+      "digest_algorithm": null,
+      "valid_from": null,
+      "valid_to": null,
+      "timestamped": false,
+      "issues": [],
+      "blob_sha256": ""
+    },
+    "structural_notes": [
+      "section `.text` is writable and executable"
+    ],
+    "unreadable_tables": [],
+    "metadata": {
+      "format": "pe",
+      "machine": 332,
+      "machine_name": "i386",
+      "declared_sections": 3,
+      "timestamp": 1698898176,
+      "characteristics": 258,
+      "dll_characteristics": 33088,
+      "subsystem": 2,
+      "linker_version": "14.0",
+      "declared_checksum": 0,
+      "computed_checksum": 16699,
+      "checksum_valid": true,
+      "size_of_image": 16384,
+      "size_of_headers": 512,
+      "file_alignment": 512,
+      "section_alignment": 4096,
+      "num_directories": 16,
+      "is_dotnet": false,
+      "clr_version": null,
+      "metadata_version": null,
+      "tls_callbacks": [],
+      "has_tls": false,
+      "rich_key": null,
+      "rich_entries": [],
+      "pdb_path": null,
+      "debug_types": [],
+      "import_hash": "b3ee4fb641b5748346a00fd166dd2301",
+      "base_of_code": 0,
+      "is_dll": false
+    }
+  },
+  "entropy": {
+    "overall": 6.203158373153128,
+    "mean_windowed": 6.203158373153128,
+    "stdev_windowed": 0.0,
+    "window": 4096,
+    "windows": [
+      {
+        "offset": 0,
+        "length": 4096,
+        "entropy": 6.203158373153128
+      }
+    ],
+    "longest_high_run": {
+      "offset": 0,
+      "length": 0,
+      "entropy": 0.0
+    },
+    "peak_offset": 0,
+    "peak_entropy": 6.203158373153128,
+    "high_entropy_fraction": 0.0
+  },
+  "strings": [
+    {
+      "offset": 376,
+      "encoding": "ascii",
+      "text": ".text",
+      "length": 5
+    },
+    {
+      "offset": 416,
+      "encoding": "ascii",
+      "text": ".data",
+      "length": 5
+    },
+    {
+      "offset": 456,
+      "encoding": "ascii",
+      "text": ".idata",
+      "length": 6
+    },
+    {
+      "offset": 512,
+      "encoding": "ascii",
+      "text": "http://update-check.example-services.net/gate.php",
+      "length": 49
+    },
+    {
+      "offset": 562,
+      "encoding": "ascii",
+      "text": "http://185.220.101.42/beacon",
+      "length": 28
+    },
+    {
+      "offset": 591,
+      "encoding": "ascii",
+      "text": "HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+      "length": 63
+    },
+    {
+      "offset": 655,
+      "encoding": "ascii",
+      "text": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+      "length": 60
+    },
+    {
+      "offset": 716,
+      "encoding": "ascii",
+      "text": "powershell -EncodedCommand SQBFAFgAIAAoAE4AZQB3AC0ATwBiAGoAZQBjAHQAIABOAGUAdAAuAFcAZQBiAEMAbABpAGUAbgB0ACkA",
+      "length": 107
+    },
+    {
+      "offset": 1124,
+      "encoding": "ascii",
+      "text": "DOv@3Ml",
+      "length": 7
+    },
+    {
+      "offset": 1464,
+      "encoding": "ascii",
+      "text": "*jA/&:G",
+      "length": 7
+    },
+    {
+      "offset": 2420,
+      "encoding": "ascii",
+      "text": "gCfTQ'",
+      "length": 6
+    },
+    {
+      "offset": 2498,
+      "encoding": "ascii",
+      "text": "M/CG(",
+      "length": 5
+    },
+    {
+      "offset": 2595,
+      "encoding": "ascii",
+      "text": "I*$6u$",
+      "length": 6
+    },
+    {
+      "offset": 2777,
+      "encoding": "ascii",
+      "text": "4h3xQDJP",
+      "length": 8
+    },
+    {
+      "offset": 2834,
+      "encoding": "ascii",
+      "text": "7SOd`",
+      "length": 5
+    },
+    {
+      "offset": 3222,
+      "encoding": "ascii",
+      "text": "VirtualAllocEx",
+      "length": 14
+    },
+    {
+      "offset": 3239,
+      "encoding": "ascii",
+      "text": "WriteProcessMemory",
+      "length": 18
+    },
+    {
+      "offset": 3260,
+      "encoding": "ascii",
+      "text": "CreateRemoteThread",
+      "length": 18
+    },
+    {
+      "offset": 3281,
+      "encoding": "ascii",
+      "text": "CreateProcessA",
+      "length": 14
+    },
+    {
+      "offset": 3298,
+      "encoding": "ascii",
+      "text": "GetComputerNameA",
+      "length": 16
+    },
+    {
+      "offset": 3316,
+      "encoding": "ascii",
+      "text": "kernel32.dll",
+      "length": 12
+    },
+    {
+      "offset": 3355,
+      "encoding": "ascii",
+      "text": "GetAsyncKeyState",
+      "length": 16
+    },
+    {
+      "offset": 3374,
+      "encoding": "ascii",
+      "text": "SetWindowsHookExA",
+      "length": 17
+    },
+    {
+      "offset": 3393,
+      "encoding": "ascii",
+      "text": "user32.dll",
+      "length": 10
+    },
+    {
+      "offset": 3438,
+      "encoding": "ascii",
+      "text": "InternetOpenA",
+      "length": 13
+    },
+    {
+      "offset": 3454,
+      "encoding": "ascii",
+      "text": "HttpSendRequestA",
+      "length": 16
+    },
+    {
+      "offset": 3473,
+      "encoding": "ascii",
+      "text": "URLDownloadToFileA",
+      "length": 18
+    },
+    {
+      "offset": 3492,
+      "encoding": "ascii",
+      "text": "wininet.dll",
+      "length": 11
+    },
+    {
+      "offset": 3538,
+      "encoding": "ascii",
+      "text": "IsDebuggerPresent",
+      "length": 17
+    },
+    {
+      "offset": 3558,
+      "encoding": "ascii",
+      "text": "GetAsyncKeyState",
+      "length": 16
+    },
+    {
+      "offset": 3577,
+      "encoding": "ascii",
+      "text": "CreateToolhelp32Snapshot",
+      "length": 24
+    },
+    {
+      "offset": 3602,
+      "encoding": "ascii",
+      "text": "psapi.dll",
+      "length": 9
+    }
+  ],
+  "string_stats": {
+    "total": 32,
+    "unique": 31,
+    "ascii": 32,
+    "utf16le": 0,
+    "utf16be": 0,
+    "longest": 107
+  },
+  "indicators": {
+    "indicators": [
+      {
+        "kind": "url",
+        "value": "http://185.220.101.42/beacon",
+        "occurrences": 1,
+        "offsets": [
+          562
+        ],
+        "confidence": 0.95,
+        "rationale": "explicit URL with scheme"
+      },
+      {
+        "kind": "url",
+        "value": "http://update-check.example-services.net/gate.php",
+        "occurrences": 1,
+        "offsets": [
+          512
+        ],
+        "confidence": 0.95,
+        "rationale": "explicit URL with scheme"
+      },
+      {
+        "kind": "ipv4",
+        "value": "185.220.101.42",
+        "occurrences": 1,
+        "offsets": [
+          562
+        ],
+        "confidence": 0.65,
+        "rationale": "routable IPv4 literal"
+      },
+      {
+        "kind": "registry_key",
+        "value": "HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+        "occurrences": 1,
+        "offsets": [
+          591
+        ],
+        "confidence": 0.8,
+        "rationale": "registry path, potential persistence location"
+      },
+      {
+        "kind": "domain",
+        "value": "update-check.example-services.net",
+        "occurrences": 1,
+        "offsets": [
+          512
+        ],
+        "confidence": 0.6,
+        "rationale": "bare domain name"
+      },
+      {
+        "kind": "user_agent",
+        "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+        "occurrences": 1,
+        "offsets": [
+          655
+        ],
+        "confidence": 0.7,
+        "rationale": "hard-coded User-Agent, typical of custom HTTP clients"
+      }
+    ],
+    "by_kind": [
+      [
+        "url",
+        2
+      ],
+      [
+        "user_agent",
+        1
+      ],
+      [
+        "domain",
+        1
+      ],
+      [
+        "ipv4",
+        1
+      ],
+      [
+        "registry_key",
+        1
+      ]
+    ]
+  },
+  "packer": {
+    "likelihood": 20,
+    "signatures": [],
+    "evidence": [
+      {
+        "key": "section:wx",
+        "detail": "writable+executable sections: .text",
+        "weight": 20
+      }
+    ],
+    "summary": "weak indicators of packing"
+  },
+  "techniques": [
+    {
+      "id": "T1055",
+      "sub_id": null,
+      "name": "Process Injection",
+      "tactic": "defense-evasion",
+      "confidence": 0.92,
+      "evidence": [
+        "VirtualAllocEx",
+        "WriteProcessMemory",
+        "CreateRemoteThread"
+      ],
+      "note": "Allocate in another process, write to it, then execute there — the canonical injection triad.",
+      "detection": "Sysmon 8/10 with a cross-process target from a non-security product."
+    },
+    {
+      "id": "T1059.001",
+      "sub_id": "T1059.001",
+      "name": "Command and Scripting Interpreter: PowerShell",
+      "tactic": "execution",
+      "confidence": 0.88,
+      "evidence": [
+        "CreateProcessA",
+        "string:powershell -encodedcommand sqbfafgaiaaoae4azqb3ac0atwbiagoazqbjahqaiaboa…"
+      ],
+      "note": "Spawns a process and carries PowerShell invocation material, the shape of a script stager.",
+      "detection": "Script-block logging (event 4104) records the decoded command."
+    },
+    {
+      "id": "T1056.001",
+      "sub_id": "T1056.001",
+      "name": "Input Capture: Keylogging",
+      "tactic": "credential-access",
+      "confidence": 0.74,
+      "evidence": [
+        "GetAsyncKeyState",
+        "SetWindowsHookExA"
+      ],
+      "note": "Polls or hooks the keyboard through an API whose only common purpose is capturing input.",
+      "detection": "Global low-level keyboard hooks from a process with no input-method role."
+    }
+  ],
+  "score": {
+    "score": 55,
+    "grade": "high",
+    "factors": [
+      {
+        "key": "capability",
+        "name": "Offensive capability",
+        "points": 35,
+        "max_points": 35,
+        "detail": "3 techniques inferred across 3 tactics",
+        "evidence": [
+          "T1055 Process Injection (92%)",
+          "T1059.001 Command and Scripting Interpreter: PowerShell (88%)",
+          "T1056.001 Input Capture: Keylogging (74%)"
+        ]
+      },
+      {
+        "key": "packer",
+        "name": "Packing / protection",
+        "points": 9,
+        "max_points": 28,
+        "detail": "weak indicators of packing",
+        "evidence": [
+          "writable+executable sections: .text (+20)"
+        ]
+      },
+      {
+        "key": "network",
+        "name": "Network indicators",
+        "points": 6,
+        "max_points": 14,
+        "detail": "3 high-value indicators embedded in the artefact",
+        "evidence": [
+          "url http://185.220.101.42/beacon",
+          "url http://update-check.example-services.net/gate.php",
+          "ipv4 185.220.101.42"
+        ]
+      },
+      {
+        "key": "severity-floor",
+        "name": "Severity floor",
+        "points": 3,
+        "max_points": 100,
+        "detail": "rule `pe-wx-section` matched at high severity",
+        "evidence": [
+          "additive score was 52, raised to the floor of 55"
+        ]
+      },
+      {
+        "key": "structure",
+        "name": "Structural anomalies",
+        "points": 2,
+        "max_points": 8,
+        "detail": "1 structural note",
+        "evidence": [
+          "section `.text` is writable and executable"
+        ]
+      },
+      {
+        "key": "signature",
+        "name": "Code signing",
+        "points": 0,
+        "max_points": 15,
+        "detail": "no embedded signature (catalog signing not checked)",
+        "evidence": [
+          "no embedded Authenticode signature (catalog signing is not checked)"
+        ]
+      }
+    ],
+    "verdict": "High risk executable, score 55/100. Main contributors: offensive capability (35/35), packing / protection (9/28). Raised from the additive estimate of 52 because rule `pe-wx-section` matched at high severity."
+  },
+  "findings": [
+    {
+      "rule_id": "pe-wx-section",
+      "rule_name": "Writable and executable section",
+      "severity": "high",
+      "description": "A section that is both writable and executable breaks W^X. Normal compiler output never produces one; unpacking stubs and shellcode staging areas always do.",
+      "evidence": [
+        "format is pe",
+        "1 writable and executable section"
+      ],
+      "tags": [
+        "packing",
+        "memory-safety"
+      ]
+    },
+    {
+      "rule_id": "capability-injection",
+      "rule_name": "Process injection capability",
+      "severity": "medium",
+      "description": "Imports the allocate-write-execute triad that cross-process injection needs. Medium because the triad is also the shape of a debugger, a compatibility shim, a remote-session helper and a time-travel injection tool — the Windows service control manager and the RDP clipboard bridge both carry it. The capability is a fact; whether it is hostile is what the rest of the report is for.",
+      "evidence": [
+        "techniques matched: T1055"
+      ],
+      "tags": [
+        "defense-evasion",
+        "injection"
+      ]
+    },
+    {
+      "rule_id": "capability-input-capture",
+      "rule_name": "Keystroke capture capability",
+      "severity": "medium",
+      "description": "Polls or hooks the keyboard globally. Input-method editors, accessibility tools and remote-desktop software do this legitimately, so it is a context signal until corroborated by signature or reputation.",
+      "evidence": [
+        "techniques matched: T1056.001"
+      ],
+      "tags": [
+        "credential-access",
+        "spyware"
+      ]
+    },
+    {
+      "rule_id": "high-entropy-code",
+      "rule_name": "Executable section is indistinguishable from ciphertext",
+      "severity": "medium",
+      "description": "Peak section entropy above 7.6 bits/byte in executable code means the machine instructions are encrypted or compressed. Compiled code does not look like this.",
+      "evidence": [
+        "peak section entropy 7.91 meets the 7.60 threshold"
+      ],
+      "tags": [
+        "packing",
+        "entropy"
+      ]
+    },
+    {
+      "rule_id": "pe-unsigned-with-network",
+      "rule_name": "No embedded signature, two or more endpoints",
+      "severity": "low",
+      "description": "A Windows executable with no embedded Authenticode blob that also embeds at least two network endpoints. Low, not medium, because the fact is narrower than it looks: verification of a security catalog needs a platform API this tool does not call, and Windows signs most of its own binaries that way, so absence of an embedded blob says nothing about whether the file is trusted. What remains is one observation worth a glance, not a verdict.",
+      "evidence": [
+        "format is pe",
+        "no embedded signature (catalog signing is not checked)",
+        "4 matching indicators (minimum 2)"
+      ],
+      "tags": [
+        "delivery",
+        "c2",
+        "windows"
+      ]
+    }
+  ],
+  "rules_evaluated": 24,
+  "diagnostics": [],
+  "timing": {
+    "detect_ms": 0,
+    "parse_ms": 0,
+    "strings_ms": 0,
+    "analysis_ms": 0,
+    "rules_ms": 0,
+    "total_ms": 1
+  }
+}

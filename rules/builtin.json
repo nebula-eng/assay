@@ -1,0 +1,438 @@
+{
+  "name": "assay-builtin",
+  "version": "1.1.0",
+  "rules": [
+    {
+      "id": "pe-unsigned-with-network",
+      "name": "No embedded signature, two or more endpoints",
+      "severity": "low",
+      "description": "A Windows executable with no embedded Authenticode blob that also embeds at least two network endpoints. Low, not medium, because the fact is narrower than it looks: verification of a security catalog needs a platform API this tool does not call, and Windows signs most of its own binaries that way, so absence of an embedded blob says nothing about whether the file is trusted. What remains is one observation worth a glance, not a verdict.",
+      "match": {
+        "format": [
+          "pe"
+        ],
+        "signed": false,
+        "min_iocs": 2,
+        "ioc_kinds": [
+          "url",
+          "ipv4",
+          "onion",
+          "domain"
+        ]
+      },
+      "tags": [
+        "delivery",
+        "c2",
+        "windows"
+      ]
+    },
+    {
+      "id": "pe-no-imports",
+      "name": "Executable PE with an empty import table",
+      "severity": "medium",
+      "description": "A standalone PE image that imports nothing through the normal loader path. Medium, not high: this is how NT-native images are built, since winload.exe and winresume.exe resolve everything through the native API. Shared libraries are excluded on purpose — a data-only DLL such as a keyboard layout has nothing to import, and including them put a medium verdict on 426 of the operating system's own libraries. A stripped import table is also what a packer leaves behind, but the packer verdict, not the empty table, is what should drive the score.",
+      "match": {
+        "format": [
+          "pe"
+        ],
+        "kind": [
+          "executable"
+        ],
+        "max_imports": 0
+      },
+      "tags": [
+        "packing",
+        "anti-analysis"
+      ]
+    },
+    {
+      "id": "pe-tls-callbacks",
+      "name": "PE with TLS callbacks",
+      "severity": "low",
+      "description": "TLS callbacks execute before the documented entry point. Compilers emit them for ordinary thread-local storage, so presence alone is a context signal rather than a verdict, and it is graded as one: low. Packers and staged loaders abuse them, which is why it is reported at all.",
+      "match": {
+        "format": [
+          "pe"
+        ],
+        "has_tls": true
+      },
+      "tags": [
+        "packing",
+        "anti-analysis"
+      ]
+    },
+    {
+      "id": "pe-wx-section",
+      "name": "Writable and executable section",
+      "severity": "high",
+      "description": "A section that is both writable and executable breaks W^X. Normal compiler output never produces one; unpacking stubs and shellcode staging areas always do.",
+      "match": {
+        "format": [
+          "pe"
+        ],
+        "min_wx_sections": 1
+      },
+      "tags": [
+        "packing",
+        "memory-safety"
+      ]
+    },
+    {
+      "id": "pe-managed-with-rich-header",
+      "name": "Managed assembly carrying an MSVC Rich header",
+      "severity": "medium",
+      "description": "The Rich header is emitted by the native MSVC linker, not by the .NET compiler. A managed assembly that carries one is usually a native dropper stub with a managed payload bolted on.",
+      "match": {
+        "format": [
+          "pe"
+        ],
+        "is_dotnet": true,
+        "signed": false
+      },
+      "tags": [
+        "dotnet",
+        "loader"
+      ]
+    },
+    {
+      "id": "pe-unsigned-driver",
+      "name": "Unsigned kernel driver",
+      "severity": "critical",
+      "description": "Windows will not load an unsigned driver on a default configuration. If this file is meant to run, it relies on a disabled signature policy or a vulnerable signed driver — either way it is a bring-your-own-vulnerable-driver candidate.",
+      "match": {
+        "format": [
+          "pe"
+        ],
+        "kind": [
+          "driver"
+        ],
+        "signed": false
+      },
+      "tags": [
+        "driver",
+        "byovd",
+        "privilege-escalation"
+      ]
+    },
+    {
+      "id": "packed-likely",
+      "name": "Likely packed or protected",
+      "severity": "medium",
+      "description": "Multiple independent packing signals agree. Static analysis of the payload will be limited until the stub is unpacked.",
+      "match": {
+        "min_packer": 45
+      },
+      "tags": [
+        "packing"
+      ]
+    },
+    {
+      "id": "packed-and-networked",
+      "name": "Packed binary that also talks to the network",
+      "severity": "medium",
+      "description": "Packing plus embedded endpoints. Medium: a compressed installer that checks a download URL for updates has exactly this shape, and so does a loader. The two signals corroborate each other but neither is rare — raising this to high scored winload.exe (a compressed boot loader with PXE support) and OneDriveSetup.exe as loaders.",
+      "match": {
+        "min_packer": 45,
+        "min_iocs": 1,
+        "ioc_kinds": [
+          "url",
+          "ipv4",
+          "onion",
+          "domain"
+        ]
+      },
+      "tags": [
+        "packing",
+        "c2",
+        "loader"
+      ]
+    },
+    {
+      "id": "high-entropy-code",
+      "name": "Executable section is indistinguishable from ciphertext",
+      "severity": "medium",
+      "description": "Peak section entropy above 7.6 bits/byte in executable code means the machine instructions are encrypted or compressed. Compiled code does not look like this.",
+      "match": {
+        "min_entropy": 7.6
+      },
+      "tags": [
+        "packing",
+        "entropy"
+      ]
+    },
+    {
+      "id": "capability-injection",
+      "name": "Process injection capability",
+      "severity": "medium",
+      "description": "Imports the allocate-write-execute triad that cross-process injection needs. Medium because the triad is also the shape of a debugger, a compatibility shim, a remote-session helper and a time-travel injection tool — the Windows service control manager and the RDP clipboard bridge both carry it. The capability is a fact; whether it is hostile is what the rest of the report is for.",
+      "match": {
+        "techniques": [
+          "T1055",
+          "T1055.012",
+          "T1055.003",
+          "T1055.004"
+        ]
+      },
+      "tags": [
+        "defense-evasion",
+        "injection"
+      ]
+    },
+    {
+      "id": "capability-credential-theft",
+      "name": "Credential access capability",
+      "severity": "high",
+      "description": "Imports include process-memory dumping or LSA/SAM enumeration, the mechanics of credential theft. High rather than critical: the capability is present, but nothing here proves it targets lsass.",
+      "match": {
+        "techniques": [
+          "T1003",
+          "T1555"
+        ]
+      },
+      "tags": [
+        "credential-access"
+      ]
+    },
+    {
+      "id": "capability-input-capture",
+      "name": "Keystroke capture capability",
+      "severity": "medium",
+      "description": "Polls or hooks the keyboard globally. Input-method editors, accessibility tools and remote-desktop software do this legitimately, so it is a context signal until corroborated by signature or reputation.",
+      "match": {
+        "techniques": [
+          "T1056.001"
+        ]
+      },
+      "tags": [
+        "credential-access",
+        "spyware"
+      ]
+    },
+    {
+      "id": "impact-ransomware-shape",
+      "name": "Ransomware shape",
+      "severity": "critical",
+      "description": "A cipher primitive plus an extortion demand or an encrypted-output marker. T1490 is deliberately not enough for this rule: deleting shadow copies is a separate finding, and a rule named for ransomware should not fire on the recovery step alone.",
+      "match": {
+        "techniques": [
+          "T1486"
+        ]
+      },
+      "tags": [
+        "impact",
+        "ransomware"
+      ]
+    },
+    {
+      "id": "impact-recovery-inhibition",
+      "name": "Shadow copy or backup destruction",
+      "severity": "critical",
+      "description": "References the exact utilities ransomware uses to delete recovery points before encryption.",
+      "match": {
+        "techniques": [
+          "T1490"
+        ]
+      },
+      "tags": [
+        "impact",
+        "ransomware"
+      ]
+    },
+    {
+      "id": "defense-tool-tampering",
+      "name": "Carries code that disables security tooling",
+      "severity": "high",
+      "description": "Combines a service-control or registry write with the specific switch that turns a security product off. High rather than critical: a settings UI, an enterprise management agent and an AV killer are statically indistinguishable here — all three carry the switch and can stop the service. Critical is reserved for shapes with no benign reading, such as a complete extortion workflow.",
+      "match": {
+        "techniques": [
+          "T1562.001"
+        ]
+      },
+      "tags": [
+        "defense-evasion",
+        "anti-av"
+      ]
+    },
+    {
+      "id": "c2-tor-hidden-service",
+      "name": "Tor hidden service endpoint embedded",
+      "severity": "critical",
+      "description": "A .onion address is compiled into the binary. Almost no legitimate consumer software ships one.",
+      "match": {
+        "min_iocs": 1,
+        "ioc_kinds": [
+          "onion"
+        ]
+      },
+      "tags": [
+        "c2",
+        "anonymity"
+      ]
+    },
+    {
+      "id": "c2-wallet-address",
+      "name": "Cryptocurrency address embedded",
+      "severity": "high",
+      "description": "A Bitcoin or Ethereum address appears as a literal. In a binary, this is either a miner configuration or a ransom note hard-coded for offline generation.",
+      "match": {
+        "min_iocs": 1,
+        "ioc_kinds": [
+          "bitcoin",
+          "ethereum"
+        ]
+      },
+      "tags": [
+        "impact",
+        "ransomware",
+        "miner"
+      ]
+    },
+    {
+      "id": "persistence-registry-run",
+      "name": "Registry autorun persistence",
+      "severity": "medium",
+      "description": "Writes to a Run/RunOnce key. Medium because it is the documented mechanism for every installer, updater and startup manager: msconfig and Task Manager both write it as their normal function. What separates persistence from installation is the payload, which static structure cannot see.",
+      "match": {
+        "format": [
+          "pe"
+        ],
+        "techniques": [
+          "T1547.001"
+        ]
+      },
+      "tags": [
+        "persistence",
+        "windows"
+      ]
+    },
+    {
+      "id": "evasion-debugger-check",
+      "name": "Anti-debugging checks with network capability",
+      "severity": "low",
+      "description": "Probes for a debugger while also carrying network indicators. License enforcement and anti-cheat produce the same shape, so this is context rather than a finding to act on.",
+      "match": {
+        "techniques": [
+          "T1622",
+          "T1497.001"
+        ],
+        "min_iocs": 1,
+        "ioc_kinds": [
+          "url",
+          "ipv4",
+          "domain"
+        ]
+      },
+      "tags": [
+        "anti-analysis",
+        "c2"
+      ]
+    },
+    {
+      "id": "elf-rpath-hijack",
+      "name": "ELF with a relative or $ORIGIN library search path",
+      "severity": "high",
+      "description": "An RPATH or RUNPATH containing a relative component lets an attacker drop a shared object next to the binary and have it loaded with the binary's privileges.",
+      "match": {
+        "format": [
+          "elf"
+        ],
+        "loader_paths": [
+          "$origin",
+          "./",
+          "../"
+        ]
+      },
+      "tags": [
+        "linux",
+        "hijacking",
+        "privilege-escalation"
+      ]
+    },
+    {
+      "id": "elf-no-relro-network",
+      "name": "Network-facing ELF without RELRO",
+      "severity": "medium",
+      "description": "The binary has no PT_GNU_RELRO segment, so its GOT stays writable after relocation, and it imports networking primitives. Exploitation of any memory bug is materially easier.",
+      "match": {
+        "format": [
+          "elf"
+        ],
+        "relro": false,
+        "any_imports": [
+          "socket",
+          "connect",
+          "recv",
+          "send",
+          "accept"
+        ]
+      },
+      "tags": [
+        "linux",
+        "hardening"
+      ]
+    },
+    {
+      "id": "macho-unsigned-executable",
+      "name": "Unsigned Mach-O executable",
+      "severity": "high",
+      "description": "macOS refuses to launch unsigned code without an explicit override. An unsigned executable is either pre-notarisation build output or something that expects Gatekeeper to be disabled.",
+      "match": {
+        "format": [
+          "macho"
+        ],
+        "kind": [
+          "executable"
+        ],
+        "signed": false
+      },
+      "tags": [
+        "macos",
+        "signing"
+      ]
+    },
+    {
+      "id": "archive-ships-executables",
+      "name": "Package ships executables or scripts",
+      "severity": "medium",
+      "description": "The archive contains PE/ELF/Mach-O images or interpreter scripts. Expected for installers, notable for anything else, and worth checking against the package's stated purpose.",
+      "match": {
+        "format": [
+          "zip",
+          "tar",
+          "ar",
+          "gzip"
+        ],
+        "min_executable_entries": 1
+      },
+      "tags": [
+        "supply-chain",
+        "packaging"
+      ]
+    },
+    {
+      "id": "script-obfuscation-markers",
+      "name": "Script with obfuscation or download markers",
+      "severity": "high",
+      "description": "A text script contains encoded-command, dynamic-execution or download primitives. These are the building blocks of fileless staging.",
+      "match": {
+        "format": [
+          "script"
+        ],
+        "any_strings": [
+          "-encodedcommand",
+          "invoke-expression",
+          "downloadstring",
+          "frombase64string",
+          "iex(",
+          "eval(",
+          "base64_decode"
+        ]
+      },
+      "tags": [
+        "script",
+        "fileless",
+        "obfuscation"
+      ]
+    }
+  ]
+}

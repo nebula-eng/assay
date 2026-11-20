@@ -1,0 +1,17 @@
+# Clippy policy.
+#
+# The point of this file is to make the "no panics on hostile input" invariant
+# mechanical rather than aspirational. Parsing code may not `unwrap`, may not
+# index, and may not use lossy arithmetic on values derived from the file.
+
+# Arithmetic on untrusted values must be checked or explicitly wrapping.
+disallowed-methods = [
+  { path = "std::slice::from_raw_parts", reason = "unsafe; the crate forbids unsafe entirely" },
+  { path = "std::mem::transmute", reason = "unsafe; the crate forbids unsafe entirely" },
+]
+
+# Per-function limits: a parser case that needs 120 lines is a parser case that
+# should be split, because a reviewer cannot hold 120 lines of offset arithmetic.
+too-many-lines-threshold = 120
+too-many-arguments-threshold = 8
+type-complexity-threshold = 250
