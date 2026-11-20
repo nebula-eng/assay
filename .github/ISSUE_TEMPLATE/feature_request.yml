@@ -1,0 +1,67 @@
+name: Feature request
+description: A detector, a format, a rule clause, or an interface change
+title: "[feat] "
+labels: ["enhancement", "needs-triage"]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Before filing, check [docs/ARCHITECTURE.md §13](https://github.com/nebula-eng/assay/blob/main/docs/ARCHITECTURE.md#13-what-was-deliberately-left-out)
+        — several obvious features (signature verification, disassembly, decompression)
+        are deliberately excluded, and the reasoning is written down.
+
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Kind of request
+      options:
+        - New format support
+        - New detection rule (built-in corpus)
+        - New rule clause type
+        - New analysis pass
+        - CLI improvement
+        - Desktop UI improvement
+        - Documentation
+        - Performance
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does this solve?
+      description: |
+        Describe the analysis question you cannot currently answer. "I need to know
+        whether a .NET assembly uses reflection to resolve P/Invoke targets" is a
+        problem statement. "Add .NET support" is not.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed approach
+      description: |
+        If you have one. If the data is available in the container format, say which
+        structure carries it — that is usually the deciding factor for whether this
+        is feasible without disassembly.
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: |
+        Including "I could write a rule for this instead". Many requests are best
+        served by a rule in a custom corpus rather than an engine change.
+
+  - type: checkboxes
+    id: invariants
+    attributes:
+      label: Invariants
+      description: See [CONTRIBUTING.md](https://github.com/nebula-eng/assay/blob/main/CONTRIBUTING.md).
+      options:
+        - label: This can be implemented without new parsing dependencies
+        - label: This does not require executing or emulating the sample
+        - label: This does not require decompressing archives
+        - label: This can be expressed without a network call

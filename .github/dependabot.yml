@@ -1,0 +1,36 @@
+version: 2
+updates:
+  # One entry per ecosystem and directory: Dependabot rejects duplicates for the
+  # same pair, which would have silently disabled every cargo update.
+  #
+  # Patch and minor bumps are grouped so a routine week is one PR, not fifteen.
+  # Majors are deliberately left ungrouped — a Tauri major has to be tested
+  # against the shell, and burying it in a batch hides that.
+  - package-ecosystem: cargo
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 8
+    groups:
+      patch-updates:
+        applies-to: version-updates
+        update-types: ["patch"]
+      minor-updates:
+        applies-to: version-updates
+        update-types: ["minor"]
+
+  - package-ecosystem: npm
+    directory: "/ui"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      patch-updates:
+        applies-to: version-updates
+        update-types: ["patch"]
+
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: monthly

@@ -1,0 +1,27 @@
+[package]
+name = "assay-desktop"
+description = "Desktop workbench for the Assay static supply-chain analysis engine"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+homepage.workspace = true
+
+# Release builds use the Windows subsystem so no console window flashes behind
+# the app. Debug builds keep it, because a panic backtrace is worth more than a
+# clean launcher during development.
+[lib]
+name = "assay_desktop"
+crate-type = ["lib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+assay-core = { workspace = true }
+tauri = { version = "2", features = [] }
+tauri-plugin-dialog = "2"
+serde = { workspace = true }
+serde_json = { workspace = true }

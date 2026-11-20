@@ -1,0 +1,108 @@
+name: Bug report
+description: Something is wrong — a crash, a wrong verdict, a misparsed field
+title: "[bug] "
+labels: ["bug", "needs-triage"]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the report. Two things make a bug report actionable here:
+
+        1. **A minimal reproducer.** A short Python snippet that builds the offending
+           header beats a 4 MB binary attachment — it becomes a test case.
+        2. **What you expected versus what happened.** "It says 0 imports but the
+           file clearly has an import table" is a great report.
+
+        If this is a security issue (panic on malformed input, out-of-bounds read,
+        process execution), please **do not** open an issue — see
+        [SECURITY.md](https://github.com/nebula-eng/assay/blob/main/SECURITY.md).
+
+  - type: dropdown
+    id: component
+    attributes:
+      label: Component
+      options:
+        - PE parser
+        - ELF parser
+        - Mach-O parser
+        - Archive/package parser
+        - String or indicator extraction
+        - Packer detection
+        - ATT&CK inference
+        - Scoring
+        - Rule engine
+        - CLI
+        - Desktop UI
+        - Documentation
+        - Not sure
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: Output of `assay --version`
+      placeholder: "assay 0.1.0"
+    validations:
+      required: true
+
+  - type: input
+    id: platform
+    attributes:
+      label: Platform
+      placeholder: "Windows 11 23H2, x86-64 / macOS 15.2 arm64 / Ubuntu 24.04"
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: What happened
+      description: |
+        Paste the command, the output, and any panic message. If there was a panic,
+        run with `RUST_BACKTRACE=1`.
+      render: shell
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Minimal reproducer
+      description: |
+        The smallest thing that triggers it. Options, in order of preference:
+
+        - A Python snippet that writes the malformed bytes
+        - A hex dump of the relevant header (with offsets)
+        - The generator parameters if you used `scripts/make_samples.py`
+        - A download link, if the file can be shared
+      render: python
+
+  - type: textarea
+    id: report
+    attributes:
+      label: Relevant report excerpt
+      description: |
+        If the issue is a wrong verdict, include `assay analyze <file> --format json`
+        filtered to the interesting part. **Review it first** — reports contain
+        strings, paths and possibly credentials recovered from the sample.
+      render: json
+
+  - type: checkboxes
+    id: confirm
+    attributes:
+      label: Confirmations
+      options:
+        - label: I have reviewed the pasted output for sensitive data
+          required: true
+        - label: This is not a security vulnerability (those go through SECURITY.md)
+          required: true

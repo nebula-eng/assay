@@ -1,0 +1,14 @@
+blank_issues_enabled: false
+
+contact_links:
+  - name: Security vulnerability
+    url: https://github.com/nebula-eng/assay/security/advisories/new
+    about: Report crashes on hostile input, out-of-bounds reads, or process execution privately — not as a public issue.
+
+  - name: Question about a verdict
+    url: https://github.com/nebula-eng/assay/discussions
+    about: '"Why does this file score 55?" — bring the report excerpt and the factor list.'
+
+  - name: Rule writing help
+    url: https://github.com/nebula-eng/assay/blob/main/docs/RULES.md
+    about: Grammar reference and worked examples for the declarative rule engine.
