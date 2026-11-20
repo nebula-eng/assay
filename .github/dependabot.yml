@@ -1,36 +1,55 @@
 version: 2
+
+# Dependabot here is a reminder service, not an auto-merge robot. The rules that
+# follow exist because the default behaviour is wrong for this repository in one
+# specific way: it opens a PR for every major bump, and every PR runs the full
+# three-OS CI matrix. Five majors arriving on a Monday cost more runner minutes
+# than the whole test suite is worth, and each one fails the build because
+# nothing in this tree has been written against the next major yet.
+#
+# So: majors are not opened automatically. A major bump is a deliberate change
+# that has to be reviewed against the shell, the installer icons and the pinned
+# dependency policy, and it belongs in a release, not in an inbox.
+#
+# Patch and minor are grouped per ecosystem so a routine month is one PR each.
+# One entry per ecosystem and directory: Dependabot rejects duplicates for the
+# same pair, which would silently disable every update for that ecosystem.
 updates:
-  # One entry per ecosystem and directory: Dependabot rejects duplicates for the
-  # same pair, which would have silently disabled every cargo update.
-  #
-  # Patch and minor bumps are grouped so a routine week is one PR, not fifteen.
-  # Majors are deliberately left ungrouped — a Tauri major has to be tested
-  # against the shell, and burying it in a batch hides that.
   - package-ecosystem: cargo
     directory: "/"
     schedule:
-      interval: weekly
-      day: monday
-    open-pull-requests-limit: 8
+      interval: monthly
+    open-pull-requests-limit: 2
     groups:
-      patch-updates:
+      cargo-patch:
         applies-to: version-updates
         update-types: ["patch"]
-      minor-updates:
+      cargo-minor:
         applies-to: version-updates
         update-types: ["minor"]
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: npm
     directory: "/ui"
     schedule:
-      interval: weekly
-    open-pull-requests-limit: 5
+      interval: monthly
+    open-pull-requests-limit: 2
     groups:
-      patch-updates:
+      npm-all:
         applies-to: version-updates
-        update-types: ["patch"]
+        update-types: ["patch", "minor"]
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: github-actions
     directory: "/"
     schedule:
       interval: monthly
+    open-pull-requests-limit: 2
+    groups:
+      actions-all:
+        applies-to: version-updates
+        patterns: ["*"]
