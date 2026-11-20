@@ -58,7 +58,10 @@ jobs:
 
       - run: cargo fmt --all -- --check
       - run: cargo clippy --workspace --all-targets -- -D warnings
-      - run: cargo test --workspace
+      # --all-targets, matching ci.yml. Without it the benches and examples are
+      # never compiled here, so a release can be cut with code that only fails
+      # to build under a target nobody ran.
+      - run: cargo test --workspace --all-targets
 
   cli:
     name: CLI binary (${{ matrix.target }})
@@ -154,10 +157,11 @@ jobs:
             libxdo-dev \
             patchelf
 
-      - name: Build front end
-        run: |
-          npm --prefix ui ci --no-audit --no-fund
-          npm --prefix ui run build
+      # Dependencies only: `tauri build` runs `beforeBuildCommand`, which is
+      # `npm --prefix ../../ui run build`. Building here as well compiled the
+      # same bundle twice.
+      - name: Install front-end dependencies
+        run: npm --prefix ui ci --no-audit --no-fund
 
       - uses: tauri-apps/tauri-action@v0
         env:
