@@ -61,7 +61,10 @@ project in public spaces.
 ## Enforcement
 
 Instances of abusive, harassing, or otherwise unacceptable behaviour may be
-reported to the maintainers at `conduct@assay.dev`. All complaints will be
+reported privately through the same [confidential report
+form](https://github.com/nebula-eng/assay/security/advisories/new) the security
+policy uses, or by raising it with the maintainer
+[@nebula-eng](https://github.com/nebula-eng) directly. All complaints will be
 reviewed and investigated promptly and fairly.
 
 All maintainers are obligated to respect the privacy and security of the reporter

@@ -5,8 +5,9 @@
 **Do not open a public issue for a security problem.**
 
 Report privately through GitHub's [security advisory
-form](https://github.com/nebula-eng/assay/security/advisories/new), or by email
-to `security@assay.dev` if you prefer. Include:
+form](https://github.com/nebula-eng/assay/security/advisories/new). The report is
+visible only to the maintainer. There is no mailing list, so nothing sent to an
+address at this project's name reaches anyone. Include:
 
 - What the issue is and what an attacker gains.
 - The smallest input that reproduces it (a hex snippet or a short Python builder
