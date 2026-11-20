@@ -1,0 +1,243 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+# Cancel superseded runs on the same ref: a force-push should not leave four
+# twenty-minute jobs fighting for the same runners.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: 1
+
+jobs:
+  fmt:
+    name: Format
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt
+      - run: cargo fmt --all -- --check
+
+  docs:
+    name: Documentation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # Every relative link and heading anchor across the twelve Markdown files.
+      # A table of contents that jumps nowhere is the first thing a reader
+      # notices and the last thing anyone checks by hand. Anchors follow GitHub's
+      # slug rules, including the double hyphen an em dash leaves behind.
+      - name: Links and anchors
+        run: python scripts/linkcheck.py
+
+  clippy:
+    name: Clippy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
+      - uses: Swatinem/rust-cache@v2
+
+      # `--workspace` includes the Tauri shell, so clippy has to build wry, which
+      # needs the WebKit headers at link time even for a lint pass. Without this
+      # the job fails on a missing pkg-config module rather than on a lint.
+      - name: Install Linux webview dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libwebkit2gtk-4.1-dev \
+            libayatana-appindicator3-dev \
+            librsvg2-dev \
+            libxdo-dev \
+            patchelf
+
+      # Clippy compiles the crate, so it runs the desktop build script, which
+      # refuses to proceed without the embedded bundle.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: ui/package-lock.json
+
+      - name: Build the front end the shell embeds
+        run: |
+          npm --prefix ui ci --no-audit --no-fund
+          npm --prefix ui run build
+
+      - run: cargo clippy --workspace --all-targets -- -D warnings
+
+  test:
+    name: Test (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+
+      # The workspace includes the Tauri shell, which needs WebView headers even
+      # to type-check. Installing them here keeps a single `cargo test` working
+      # across the matrix instead of excluding a crate.
+      - name: Install Linux webview dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libwebkit2gtk-4.1-dev \
+            libayatana-appindicator3-dev \
+            librsvg2-dev \
+            libxdo-dev \
+            patchelf
+
+      # The desktop crate's build script refuses to produce a binary that would
+      # open an empty window, so `--workspace` needs the bundle to exist.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: ui/package-lock.json
+
+      - name: Build the front end the shell embeds
+        run: |
+          npm --prefix ui ci --no-audit --no-fund
+          npm --prefix ui run build
+
+      - name: Run tests
+        run: cargo test --workspace --all-targets
+  e2e:
+    name: End-to-end (CLI)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Build CLI
+        run: cargo build --release -p assay-cli
+      - name: Generate fixtures
+        run: python scripts/make_samples.py --out samples
+      - name: Run end-to-end assertions
+        run: python tests/e2e.py --binary target/release/assay --samples samples
+
+  ui:
+    name: Front end
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: ui/package-lock.json
+      - run: npm --prefix ui ci --no-audit --no-fund
+      - run: npm --prefix ui run build
+
+      # A build proves the bundle compiles, not that it renders. The next steps
+      # run the real interface in Chrome and measure it.
+      #
+      # `chromium-browser` from apt is a snap stub on Ubuntu 24.04: it installs
+      # but provides no binary at /usr/bin/chromium, so the checks would fail on
+      # a missing executable rather than on a layout defect. This action fetches
+      # a real Chrome for Testing build and reports its path.
+      - name: Install Chrome
+        id: chrome
+        uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: stable
+
+      # Server and checks share one step: a background process started in an
+      # earlier step is not guaranteed to still be running, so splitting them
+      # produced an intermittent "connection refused".
+      - name: Render, layout and design checks
+        env:
+          CHROME: ${{ steps.chrome.outputs.chrome-path }}
+        run: |
+          set -euo pipefail
+          python3 -m http.server 8801 --bind 127.0.0.1 --directory ui/dist &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID 2>/dev/null || true' EXIT
+
+          for _ in $(seq 1 40); do
+            if curl -sf -o /dev/null http://127.0.0.1:8801/; then break; fi
+            sleep 0.25
+          done
+
+          node scripts/ui_smoke.mjs     --url http://127.0.0.1:8801/ --browser "$CHROME"
+          node scripts/ui_shots.mjs     --url http://127.0.0.1:8801/ --out .shots --browser "$CHROME"
+          node scripts/design_audit.mjs --url http://127.0.0.1:8801/ --browser "$CHROME"
+
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: layout-shots
+          path: .shots
+          if-no-files-found: ignore
+
+  desktop:
+    name: Desktop build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: ui/package-lock.json
+
+      - name: Install Tauri system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libwebkit2gtk-4.1-dev \
+            libayatana-appindicator3-dev \
+            librsvg2-dev \
+            libxdo-dev \
+            patchelf
+
+      - name: Build front end
+        run: |
+          npm --prefix ui ci --no-audit --no-fund
+          npm --prefix ui run build
+
+      - name: Compile the shell
+        run: cargo build -p assay-desktop
+
+  audit:
+    name: Dependency audit
+    runs-on: ubuntu-latest
+    # Informational: an advisory in a transitive Tauri dependency should raise a
+    # PR, not block an unrelated fix.
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo install cargo-audit --locked
+      - run: cargo audit
